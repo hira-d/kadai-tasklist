@@ -3,12 +3,17 @@ class TasksController < ApplicationController
   before_action :correct_user, only: [:destroy]
   
   def index
-    if logged_in?
-      @task = current_user.tasks.build  # form_with 用
-      @tasks = current_user.tasks.order(id: :desc).page(params[:page])
-    end
-  end    
+    @tasks = Task.all
+  end
   
+  def show
+    @task = Task.find(params[:id])
+  end
+  
+  def new
+    @task = Task.new
+  end
+
   def create
     @task = current_user.tasks.build(task_params)
     if @task.save
@@ -17,14 +22,30 @@ class TasksController < ApplicationController
     else
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
       flash.now[:danger] = 'メッセージの投稿に失敗しました。'
-      render 'toppages/index'
+      render 'tasks/index'
+    end
+  end
+  
+  def edit
+   @task = Task.find(params[:id])
+  end
+  
+  def update
+    @task = Task.find(params[:id])
+
+    if @task.update(task_params)
+      flash[:success] = '投稿 は正常に更新されました'
+      redirect_to @task
+    else
+      flash.now[:danger] = '投稿 は更新されませんでした'
+      render :edit
     end
   end
 
   def destroy
     @task.destroy
-    flash[:success] = 'メッセージを削除しました。'
-    redirect_back(fallback_location: root_path)
+    flash[:success] = '投稿を削除しました。'
+    redirect_to tasks_url
   end
   
   private
