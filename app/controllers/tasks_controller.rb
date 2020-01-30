@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   before_action :require_user_logged_in
-  before_action :correct_user, only: [:destroy]
+  before_action :correct_user, only: [:edit, :show, :update, :destroy]
   
   def index
     @tasks = Task.all
@@ -16,7 +16,8 @@ class TasksController < ApplicationController
   end
   
   def new
-    @task = Task.new
+    #@tasks = current_user.tasks.order(id: :desc).page(params[:page])
+    @task = current_user.tasks.build  # form_with 用
   end
 
   def create
@@ -27,7 +28,7 @@ class TasksController < ApplicationController
     else
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
       flash.now[:danger] = 'メッセージの投稿に失敗しました。'
-      render 'tasks/index'
+      render 'tasks/new'
     end
   end
   
