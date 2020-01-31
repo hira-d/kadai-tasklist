@@ -4,10 +4,8 @@ class TasksController < ApplicationController
   
   def index
     @tasks = Task.all
-    
     if logged_in?
-      @task = current_user.tasks.build  # form_with 用
-      @tasks = current_user.tasks.order(id: :desc).page(params[:page])
+      @tasks = current_user.tasks
     end
   end
   
@@ -16,7 +14,6 @@ class TasksController < ApplicationController
   end
   
   def new
-    #@tasks = current_user.tasks.order(id: :desc).page(params[:page])
     @task = current_user.tasks.build  # form_with 用
   end
 
